@@ -3,33 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AynoPay - Enterprise Payment Gateway</title>
-    <!-- Font & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>AynoPay - TrxID Verification Gateway</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-main: #0b0f19;
             --card-bg: #111827;
             --border-color: rgba(255, 255, 255, 0.08);
-            --text-primary: #f9fafb;
-            --text-secondary: #9ca3af;
-            
-            /* Brand Dynamic Colors (Default AynoPay) */
-            --brand-color: #6366f1;
-            --brand-gradient: linear-gradient(135deg, #6366f1, #4f46e5);
-            --brand-shadow: rgba(99, 102, 241, 0.35);
-        }
-
-        /* Operator Specific Themes */
-        .theme-bkash {
             --brand-color: #e2136e;
             --brand-gradient: linear-gradient(135deg, #e2136e, #be0e5a);
             --brand-shadow: rgba(226, 19, 110, 0.35);
         }
 
         .theme-nagad {
-            --brand-color: #f7931e;
+            --brand-color: #ec1c24;
             --brand-gradient: linear-gradient(135deg, #ec1c24, #f7931e);
             --brand-shadow: rgba(236, 28, 36, 0.35);
         }
@@ -40,419 +27,131 @@
             --brand-shadow: rgba(140, 52, 155, 0.35);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.08) 0px, transparent 50%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* Enterprise Card Container */
-        .aynopay-card {
-            width: 100%;
-            max-width: 420px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            position: relative;
-            transition: all 0.4s ease;
-        }
-
-        /* Header Bar */
-        .aynopay-header {
-            padding: 16px 24px;
-            background: rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 800;
-            font-size: 18px;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
-        }
-
-        .brand-logo span {
-            background: linear-gradient(135deg, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .security-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: #34d399;
-            background: rgba(52, 211, 153, 0.1);
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            font-weight: 600;
-        }
-
-        /* Order Invoice Bar */
-        .invoice-box {
-            padding: 20px 24px;
-            background: rgba(255, 255, 255, 0.015);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .invoice-details span {
-            display: block;
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .invoice-details strong {
-            font-size: 14px;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .amount-tag {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text-primary);
-        }
-
-        /* Operator Selector Tab */
-        .operator-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 20px 24px 10px;
-        }
-
-        .op-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px;
-            cursor: pointer;
-            text-align: center;
-            color: var(--text-secondary);
-            font-weight: 700;
-            font-size: 13px;
-            transition: all 0.3s ease;
-        }
-
-        .op-btn.active {
-            background: var(--brand-gradient);
-            color: #fff;
-            border-color: transparent;
-            box-shadow: 0 10px 20px -5px var(--brand-shadow);
-        }
-
-        /* Dynamic Payment Body */
-        .payment-body {
-            padding: 15px 24px 24px;
-        }
-
-        .banner-alert {
-            background: rgba(255, 255, 255, 0.04);
-            border-left: 3px solid var(--brand-color);
-            border-radius: 6px;
-            padding: 10px 14px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .input-box {
-            margin-bottom: 18px;
-        }
-
-        .input-box label {
-            display: block;
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .input-field-wrapper {
-            position: relative;
-        }
-
-        .input-field-wrapper input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 14px;
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            outline: none;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .input-field-wrapper input:focus {
-            border-color: var(--brand-color);
-            box-shadow: 0 0 0 3px var(--brand-shadow);
-        }
-
-        /* Submit Button */
-        .btn-pay {
-            width: 100%;
-            background: var(--brand-gradient);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            padding: 15px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 10px 20px -5px var(--brand-shadow);
-            transition: all 0.3s ease;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-pay:hover {
-            transform: translateY(-2px);
-            opacity: 0.95;
-        }
-
-        .btn-pay:active {
-            transform: translateY(0);
-        }
-
-        /* Loader & Processing */
-        .loader {
-            width: 18px;
-            height: 18px;
-            border: 2px solid #fff;
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            animation: rotation 1s linear infinite;
-        }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Confirmation / Success Screen */
-        .status-screen {
-            display: none;
-            padding: 40px 24px;
-            text-align: center;
-        }
-
-        .status-icon {
-            width: 64px;
-            height: 64px;
-            background: rgba(52, 211, 153, 0.1);
-            border: 2px solid #34d399;
-            color: #34d399;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 20px;
-            font-size: 28px;
-        }
-
-        .status-screen h3 {
-            color: var(--text-primary);
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        .status-screen p {
-            color: var(--text-secondary);
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-        .timer-badge {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--brand-color);
-        }
-
-        .footer-note {
-            text-align: center;
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.3);
-            padding: 15px;
-            border-top: 1px solid var(--border-color);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; color: #fff; }
+        
+        .aynopay-card { width: 100%; max-width: 420px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .header { padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .invoice { padding: 18px 24px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        
+        .operator-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px 24px 10px; }
+        .op-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; color: #aaa; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .op-btn.active { background: var(--brand-gradient); color: #fff; border-color: transparent; box-shadow: 0 8px 15px var(--brand-shadow); }
+        
+        .body-content { padding: 20px 24px; }
+        .instruction-box { background: rgba(255,255,255,0.03); border-left: 3px solid var(--brand-color); padding: 12px; border-radius: 6px; font-size: 12px; color: #ccc; margin-bottom: 15px; line-height: 1.5; }
+        .number-box { background: #fff; color: #111; font-weight: 800; text-align: center; padding: 10px; border-radius: 8px; font-size: 18px; margin-bottom: 15px; letter-spacing: 1px; }
+        
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 6px; }
+        .input-group input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-size: 15px; text-align: center; outline: none; }
+        
+        .btn-pay { width: 100%; padding: 14px; background: var(--brand-gradient); color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 15px var(--brand-shadow); }
+        .status-success { display: none; padding: 40px 24px; text-align: center; }
     </style>
 </head>
-<body class="theme-bkash">
+<body>
 
-    <div class="aynopay-card" id="main-card">
-        <!-- Header -->
-        <div class="aynopay-header">
-            <div class="brand-logo">
-                <span>AynoPay</span>
-            </div>
-            <div class="security-badge">
-                🔒 256-bit SSL Automated
-            </div>
-        </div>
-
-        <!-- Invoice -->
-        <div class="invoice-box">
-            <div class="invoice-details">
-                <span>Merchant Order ID</span>
-                <strong>#AP-998241</strong>
-            </div>
-            <div class="amount-tag">৳ 150.00</div>
-        </div>
-
-        <!-- Gateway Form Content -->
-        <div id="form-container">
-            <!-- Operator Selection Tabs -->
-            <div class="operator-grid">
-                <button class="op-btn active" onclick="switchMethod('bkash')">bKash</button>
-                <button class="op-btn" onclick="switchMethod('nagad')">Nagad</button>
-                <button class="op-btn" onclick="switchMethod('rocket')">Rocket</button>
-            </div>
-
-            <!-- Interactive Body -->
-            <div class="payment-body">
-                <div class="banner-alert" id="instruction-text">
-                    আপনার <strong>bKash</strong> পার্সোনাল অ্যাকাউন্ট থেকে টাকা পাঠাতে ওয়ালেট নাম্বার দিন। অটোমেশন সিস্টেম ওটিপি এনক্রিপশনের মাধ্যমে প্রসেস করবে।
-                </div>
-
-                <!-- Step 1: Mobile Number Input -->
-                <div id="step-phone">
-                    <div class="input-box">
-                        <label>আপনার অ্যাকাউন্ট নাম্বার (Your Account Number)</label>
-                        <div class="input-field-wrapper">
-                            <input type="text" id="phone_num" placeholder="017XXXXXXXX" maxlength="11">
-                        </div>
-                    </div>
-                    <button class="btn-pay" onclick="submitPhone()">
-                        <span>পরবর্তী ধাপ</span> &rarr;
-                    </button>
-                </div>
-
-                <!-- Step 2: Automated OTP Input (Initially Hidden) -->
-                <div id="step-otp" style="display: none;">
-                    <div class="input-box">
-                        <label>ওটিপি ভেরিফিকেশন কোড (Automated OTP)</label>
-                        <div class="input-field-wrapper">
-                            <input type="text" id="otp_num" placeholder="XXXXXX" maxlength="6">
-                        </div>
-                    </div>
-                    <button class="btn-pay" onclick="verifyOTP()">
-                        <span id="btn-text">পেমেন্ট কনফার্ম করুন</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Step 3: Success Screen -->
-        <div class="status-screen" id="status-screen">
-            <div class="status-icon">✓</div>
-            <h3>পেমেন্ট সফল হয়েছে!</h3>
-            <p>আপনার অর্ডার কনফার্ম করা হয়েছে। মার্চেন্ট সাইটে রিডাইরেক্ট করা হচ্ছে...</p>
-            <div class="timer-badge" id="countdown">3</div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer-note">
-            Powered by AynoPay Enterprise Payment Protocol
-        </div>
+<div class="aynopay-card">
+    <div class="header">
+        <strong style="font-size: 18px; color: #818cf8;">AynoPay</strong>
+        <span style="font-size: 11px; color: #34d399;">🔒 Instant Auto Verification</span>
     </div>
 
-    <script>
-        let currentMethod = 'bkash';
+    <div class="invoice">
+        <div><span style="font-size:12px; color:#aaa;">Amount to Pay</span><br><strong style="font-size:20px; color:#fff;">৳ 200.00</strong></div>
+        <div style="font-size:12px; color:#818cf8;">Send Money</div>
+    </div>
 
-        function switchMethod(method) {
-            currentMethod = method;
-            const body = document.body;
-            const buttons = document.querySelectorAll('.op-btn');
-            const alertText = document.getElementById('instruction-text');
+    <div class="operator-grid">
+        <button class="op-btn active" onclick="setMethod('bkash')">bKash</button>
+        <button class="op-btn" onclick="setMethod('nagad')">Nagad</button>
+        <button class="op-btn" onclick="setMethod('rocket')">Rocket</button>
+    </div>
 
-            // Reset Tab UI
-            buttons.forEach(btn => btn.classList.remove('active'));
+    <div class="body-content" id="form-body">
+        <div class="instruction-box" id="instruction">
+            ১. আপনার বিকাশ অ্যাপ বা ডায়াল কোড থেকে নিচের নাম্বারে <strong>৳200</strong> Send Money করুন।<br>
+            ২. টাকা পাঠানোর পর প্রাপ্ত <strong>TrxID</strong> নিচে ইনপুট দিন।
+        </div>
 
-            // Change Theme & UI Text
-            if (method === 'bkash') {
-                body.className = 'theme-bkash';
-                buttons[0].classList.add('active');
-                alertText.innerHTML = 'আপনার <strong>bKash</strong> পার্সোনাল অ্যাকাউন্ট থেকে টাকা পাঠাতে ওয়ালেট নাম্বার দিন। অটোমেশন সিস্টেম ওটিপি প্রসেস করবে।';
-            } else if (method === 'nagad') {
-                body.className = 'theme-nagad';
-                buttons[1].classList.add('active');
-                alertText.innerHTML = 'আপনার <strong>Nagad</strong> পার্সোনাল অ্যাকাউন্ট থেকে সেন্ড মানি প্রসেস করার জন্য নাম্বার ইনপুট দিন।';
-            } else if (method === 'rocket') {
-                body.className = 'theme-rocket';
-                buttons[2].classList.add('active');
-                alertText.innerHTML = 'আপনার <strong>Rocket</strong> অ্যাকাউন্ট নাম্বার দিন। সিস্টেমের সাহায্যে ইন্সট্যান্ট কনফার্ম করা হবে।';
-            }
+        <div class="number-box">01766952732</div>
+
+        <div class="input-group">
+            <label>যে নাম্বার থেকে টাকা পাঠিয়েছেন (Sender Number)</label>
+            <input type="text" id="sender_phone" placeholder="017XXXXXXXX" maxlength="11">
+        </div>
+
+        <div class="input-group">
+            <label>ট্রানজেকশন আইডি (TrxID)</label>
+            <input type="text" id="trx_id" placeholder="যেমন: 9N78A12B3C" style="text-transform:uppercase;">
+        </div>
+
+        <button class="btn-pay" onclick="verifyTrx()">পেমেন্ট ভেরিফাই করুন</button>
+    </div>
+
+    <!-- Success Window -->
+    <div class="status-success" id="success-view">
+        <div style="font-size:50px; color:#34d399; margin-bottom:10px;">✓</div>
+        <h3 style="margin-bottom:8px;">পেমেন্ট কনফার্ম হয়েছে!</h3>
+        <p style="font-size:13px; color:#aaa;">আপনার ৳২০০ টাকা সফলতা সাথে 01766952732 নাম্বারে জমা হয়েছে।</p>
+    </div>
+</div>
+
+<script>
+    let currentMethod = 'bkash';
+    const API_URL = 'http://localhost:5000/api'; // আপনার হোস্ট করা ব্যাকএন্ড URL
+
+    function setMethod(method) {
+        currentMethod = method;
+        document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+        const ins = document.getElementById('instruction');
+
+        if(method === 'bkash') { 
+            document.body.className = ''; 
+            event.target.classList.add('active');
+            ins.innerHTML = '১. বিকাশ অ্যাপ/কোড থেকে <strong>01766952732</strong> নাম্বারে ৳২০০ Send Money করুন।<br>২. প্রাপ্ত TrxID নিচে দিন।';
+        }
+        if(method === 'nagad') { 
+            document.body.className = 'theme-nagad'; 
+            event.target.classList.add('active');
+            ins.innerHTML = '১. নগদ অ্যাপ/*167# ডায়াল করে <strong>01766952732</strong> নাম্বারে ৳২০০ Send Money করুন।<br>২. প্রাপ্ত TrxID নিচে দিন।';
+        }
+        if(method === 'rocket') { 
+            document.body.className = 'theme-rocket'; 
+            event.target.classList.add('active');
+            ins.innerHTML = '১. রকেট অ্যাপ/*322# দিয়ে <strong>01766952732</strong> নাম্বারে ৳২০০ Send Money করুন।<br>২. প্রাপ্ত TrxID নিচে দিন।';
+        }
+    }
+
+    async function verifyTrx() {
+        const phone = document.getElementById('sender_phone').value;
+        const trx = document.getElementById('trx_id').value;
+
+        if(phone.length < 11 || trx.length < 6) {
+            alert('সঠিক মোবাইল নাম্বার এবং TrxID প্রদান করুন');
+            return;
         }
 
-        function submitPhone() {
-            const phone = document.getElementById('phone_num').value;
-            if (phone.length < 11) {
-                alert('সঠিক ১১ ডিজিটের মোবাইল নাম্বার দিন');
-                return;
+        try {
+            const res = await fetch(`${API_URL}/verify-trx`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ trxId: trx, senderPhone: phone, amount: 200, method: currentMethod })
+            });
+
+            const data = await res.json();
+
+            if(data.success) {
+                document.getElementById('form-body').style.display = 'none';
+                document.getElementById('success-view').style.display = 'block';
+            } else {
+                alert(data.message);
             }
-            document.getElementById('step-phone').style.display = 'none';
-            document.getElementById('step-otp').style.display = 'block';
+        } catch(e) {
+            alert('সার্ভার কানেক্ট হতে পারছে না। ব্যাকএন্ড চালুকৃত আছে কিনা চেক করুন।');
         }
-
-        function verifyOTP() {
-            const otp = document.getElementById('otp_num').value;
-            if (otp.length < 4) {
-                alert('সঠিক ভেরিফিকেশন কোড লিখুন');
-                return;
-            }
-
-            const btnText = document.getElementById('btn-text');
-            btnText.innerHTML = '<span class="loader"></span> অটো ভেরিফাই হচ্ছে...';
-
-            setTimeout(() => {
-                document.getElementById('form-container').style.display = 'none';
-                document.getElementById('status-screen').style.display = 'block';
-
-                let count = 3;
-                const timer = setInterval(() => {
-                    count--;
-                    document.getElementById('countdown').innerText = count;
-                    if (count <= 0) {
-                        clearInterval(timer);
-                        alert("Merchant Callback Executed!");
-                    }
-                }, 1000);
-            }, 2000);
-        }
-    </script>
+    }
+</script>
 </body>
 </html>
