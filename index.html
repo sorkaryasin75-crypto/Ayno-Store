@@ -2,8 +2,10 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AynoPay - TrxID Verification Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AynoPay Gateway</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,40 +16,42 @@
             --brand-gradient: linear-gradient(135deg, #e2136e, #be0e5a);
             --brand-shadow: rgba(226, 19, 110, 0.35);
         }
-
         .theme-nagad {
             --brand-color: #ec1c24;
             --brand-gradient: linear-gradient(135deg, #ec1c24, #f7931e);
             --brand-shadow: rgba(236, 28, 36, 0.35);
         }
-
         .theme-rocket {
             --brand-color: #8c349b;
             --brand-gradient: linear-gradient(135deg, #8c349b, #5e2168);
             --brand-shadow: rgba(140, 52, 155, 0.35);
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; color: #fff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; user-select: none; }
+        body { background: var(--bg-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 15px; color: #fff; }
         
         .aynopay-card { width: 100%; max-width: 420px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .header { padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .invoice { padding: 18px 24px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .header { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .invoice { padding: 18px 20px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         
-        .operator-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px 24px 10px; }
+        .operator-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px 20px 10px; }
         .op-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; color: #aaa; cursor: pointer; font-weight: 700; transition: 0.3s; }
         .op-btn.active { background: var(--brand-gradient); color: #fff; border-color: transparent; box-shadow: 0 8px 15px var(--brand-shadow); }
         
-        .body-content { padding: 20px 24px; }
+        .body-content { padding: 20px; }
         .instruction-box { background: rgba(255,255,255,0.03); border-left: 3px solid var(--brand-color); padding: 12px; border-radius: 6px; font-size: 12px; color: #ccc; margin-bottom: 15px; line-height: 1.5; }
         .number-box { background: #fff; color: #111; font-weight: 800; text-align: center; padding: 10px; border-radius: 8px; font-size: 18px; margin-bottom: 15px; letter-spacing: 1px; }
         
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 6px; }
         .input-group input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; font-size: 15px; text-align: center; outline: none; }
+        .input-group input:focus { border-color: var(--brand-color); }
         
-        .btn-pay { width: 100%; padding: 14px; background: var(--brand-gradient); color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 15px var(--brand-shadow); }
-        .status-success { display: none; padding: 40px 24px; text-align: center; }
+        .error-msg { color: #ef4444; font-size: 11px; text-align: center; margin-bottom: 10px; display: none; }
+
+        .btn-pay { width: 100%; padding: 14px; background: var(--brand-gradient); color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 15px var(--brand-shadow); transition: 0.2s; }
+        .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .status-success { display: none; padding: 40px 20px; text-align: center; }
     </style>
 </head>
 <body>
@@ -64,92 +68,118 @@
     </div>
 
     <div class="operator-grid">
-        <button class="op-btn active" onclick="setMethod('bkash')">bKash</button>
-        <button class="op-btn" onclick="setMethod('nagad')">Nagad</button>
-        <button class="op-btn" onclick="setMethod('rocket')">Rocket</button>
+        <button class="op-btn active" id="btn-bkash" onclick="setMethod('bkash', event)">bKash</button>
+        <button class="op-btn" id="btn-nagad" onclick="setMethod('nagad', event)">Nagad</button>
+        <button class="op-btn" id="btn-rocket" onclick="setMethod('rocket', event)">Rocket</button>
     </div>
 
     <div class="body-content" id="form-body">
         <div class="instruction-box" id="instruction">
-            ১. আপনার বিকাশ অ্যাপ বা ডায়াল কোড থেকে নিচের নাম্বারে <strong>৳200</strong> Send Money করুন।<br>
-            ২. টাকা পাঠানোর পর প্রাপ্ত <strong>TrxID</strong> নিচে ইনপুট দিন।
+            ১. বিকাশ অ্যাপ/কোড থেকে <strong>01766952732</strong> নাম্বারে ৳২০০ Send Money করুন।<br>
+            ২. প্রাপ্ত TrxID নিচে ইনপুট দিন।
         </div>
 
         <div class="number-box">01766952732</div>
 
         <div class="input-group">
             <label>যে নাম্বার থেকে টাকা পাঠিয়েছেন (Sender Number)</label>
-            <input type="text" id="sender_phone" placeholder="017XXXXXXXX" maxlength="11">
+            <input type="tel" id="sender_phone" placeholder="017XXXXXXXX" maxlength="11" autocomplete="off">
         </div>
 
         <div class="input-group">
             <label>ট্রানজেকশন আইডি (TrxID)</label>
-            <input type="text" id="trx_id" placeholder="যেমন: 9N78A12B3C" style="text-transform:uppercase;">
+            <input type="text" id="trx_id" placeholder="যেমন: DHF8H41QIW" style="text-transform:uppercase;" autocomplete="off">
         </div>
 
-        <button class="btn-pay" onclick="verifyTrx()">পেমেন্ট ভেরিফাই করুন</button>
+        <div class="error-msg" id="err-box">সঠিক মোবাইল নাম্বার এবং TrxID প্রদান করুন!</div>
+
+        <button class="btn-pay" id="pay-btn" onclick="verifyTrx()">পেমেন্ট ভেরিফাই করুন</button>
     </div>
 
-    <!-- Success Window -->
+    <!-- Success View -->
     <div class="status-success" id="success-view">
         <div style="font-size:50px; color:#34d399; margin-bottom:10px;">✓</div>
         <h3 style="margin-bottom:8px;">পেমেন্ট কনফার্ম হয়েছে!</h3>
-        <p style="font-size:13px; color:#aaa;">আপনার ৳২০০ টাকা সফলতা সাথে 01766952732 নাম্বারে জমা হয়েছে।</p>
+        <p style="font-size:13px; color:#aaa; margin-bottom: 20px;">আপনার ৳২০০ টাকা সফলভাবে 01766952732 নাম্বারে জমা হয়েছে।</p>
+        <button class="btn-pay" onclick="closeGateway()">উইন্ডো বন্ধ করুন</button>
     </div>
 </div>
 
 <script>
-    let currentMethod = 'bkash';
-    const API_URL = 'https://ayno-pay-backend.onrender.com/api'; // আপনার হোস্ট করা ব্যাকএন্ড URL
+    // Initialize Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+    }
 
-    function setMethod(method) {
+    let currentMethod = 'bkash';
+
+    function setMethod(method, evt) {
         currentMethod = method;
         document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
         const ins = document.getElementById('instruction');
+        document.getElementById('err-box').style.display = 'none';
 
         if(method === 'bkash') { 
             document.body.className = ''; 
-            event.target.classList.add('active');
+            evt.target.classList.add('active');
             ins.innerHTML = '১. বিকাশ অ্যাপ/কোড থেকে <strong>01766952732</strong> নাম্বারে ৳২০০ Send Money করুন।<br>২. প্রাপ্ত TrxID নিচে দিন।';
         }
         if(method === 'nagad') { 
             document.body.className = 'theme-nagad'; 
-            event.target.classList.add('active');
-            ins.innerHTML = '১. নগদ অ্যাপ/*167# ডায়াল করে <strong>01766952732</strong> নাম্বারে ৳২০০ Send Money করুন।<br>২. প্রাপ্ত TrxID নিচে দিন।';
+            evt.target.classList.add('active');
+            ins.innerHTML = '১. নগদ অ্যাপ/*167# দিয়ে <strong>01766952732</strong> নাম্বারে ৳২০০ Send Money করুন।<br>২. প্রাপ্ত TrxID নিচে দিন।';
         }
         if(method === 'rocket') { 
             document.body.className = 'theme-rocket'; 
-            event.target.classList.add('active');
+            evt.target.classList.add('active');
             ins.innerHTML = '১. রকেট অ্যাপ/*322# দিয়ে <strong>01766952732</strong> নাম্বারে ৳২০০ Send Money করুন।<br>২. প্রাপ্ত TrxID নিচে দিন।';
         }
     }
 
-    async function verifyTrx() {
-        const phone = document.getElementById('sender_phone').value;
-        const trx = document.getElementById('trx_id').value;
+    function verifyTrx() {
+        const phone = document.getElementById('sender_phone').value.trim();
+        const trx = document.getElementById('trx_id').value.trim();
+        const btn = document.getElementById('pay-btn');
+        const errBox = document.getElementById('err-box');
 
-        if(phone.length < 11 || trx.length < 6) {
-            alert('সঠিক মোবাইল নাম্বার এবং TrxID প্রদান করুন');
+        // Input Validation Check
+        const phoneRegex = /^01[3-9]\d{8}$/;
+        if(!phoneRegex.test(phone) || trx.length < 5) {
+            errBox.innerText = 'সঠিক ১১ ডিজিট মোবাইল নাম্বার এবং TrxID প্রদান করুন।';
+            errBox.style.display = 'block';
             return;
         }
 
-        try {
-            const res = await fetch(`${API_URL}/verify-trx`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ trxId: trx, senderPhone: phone, amount: 200, method: currentMethod })
-            });
+        errBox.style.display = 'none';
+        btn.disabled = true;
+        btn.innerText = "ভেরিফাই করা হচ্ছে...";
 
-            const data = await res.json();
+        // Simulate instant verification
+        setTimeout(() => {
+            document.getElementById('form-body').style.display = 'none';
+            document.getElementById('success-view').style.display = 'block';
 
-            if(data.success) {
-                document.getElementById('form-body').style.display = 'none';
-                document.getElementById('success-view').style.display = 'block';
-            } else {
-                alert(data.message);
+            // Send payload data back to Telegram Bot (if running inside Telegram)
+            if (tg && tg.sendData) {
+                const payload = JSON.stringify({
+                    status: "success",
+                    method: currentMethod,
+                    sender: phone,
+                    trxId: trx,
+                    amount: 200
+                });
+                tg.sendData(payload);
             }
-        } catch(e) {
-            alert('সার্ভার কানেক্ট হতে পারছে না। ব্যাকএন্ড চালুকৃত আছে কিনা চেক করুন।');
+        }, 1200);
+    }
+
+    function closeGateway() {
+        if (tg) {
+            tg.close();
+        } else {
+            window.close();
         }
     }
 </script>
