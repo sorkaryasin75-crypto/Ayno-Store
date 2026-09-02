@@ -211,13 +211,14 @@
 
     // ⚠️ আপনার Firebase কনফিগারেশন কী দিয়ে রিপ্লেস করুন
     const firebaseConfig = {
-      apiKey: "AIzaSyYOUR_API_KEY_HERE",
-      authDomain: "your-app.firebaseapp.com",
-      projectId: "your-app-id",
-      storageBucket: "your-app.appspot.com",
-      messagingSenderId: "000000000",
-      appId: "1:00000000:web:00000000"
-    };
+  apiKey: "AIzaSyA3GDWzV9kNRvoy8x2plyTe-24SCsfR65I",
+  authDomain: "ayno-store.firebaseapp.com",
+  databaseURL: "https://ayno-store-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ayno-store",
+  storageBucket: "ayno-store.firebasestorage.app",
+  messagingSenderId: "503610297982",
+  appId: "1:503610297982:web:20b0b5f9a266697b78d22f"
+};
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -230,7 +231,7 @@
     const tgUser = tg.initDataUnsafe?.user || { id: 999999, first_name: "Demo User", username: "demouser" };
 
     // ⚠️ নিজের Telegram User ID দিন (যাতে Admin Dashboard দেখতে পারেন)
-    const ADMIN_ID = 999999; 
+    const ADMIN_ID = 6582650458; 
 
     let userData = null;
     let allProducts = [];
