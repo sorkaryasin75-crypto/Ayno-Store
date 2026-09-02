@@ -1,598 +1,458 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ayno Store - Professional Digital Web App</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <style>
-    :root {
-      --bg-dark: #070913;
-      --card-bg: rgba(15, 23, 42, 0.85);
-      --border-color: rgba(255, 255, 255, 0.08);
-    }
-    body {
-      background-color: var(--bg-dark);
-      color: #f1f5f9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      user-select: none;
-    }
-    .glass-box {
-      background: var(--card-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--border-color);
-    }
-    .active-tab {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #ffffff;
-      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-    }
-    .nav-active {
-      color: #3b82f6 !important;
-    }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .animate-glow { animation: pulseGlow 2s infinite; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AynoPay - Enterprise Payment Gateway</title>
+    <!-- Font & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --card-bg: #111827;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            
+            /* Brand Dynamic Colors (Default AynoPay) */
+            --brand-color: #6366f1;
+            --brand-gradient: linear-gradient(135deg, #6366f1, #4f46e5);
+            --brand-shadow: rgba(99, 102, 241, 0.35);
+        }
+
+        /* Operator Specific Themes */
+        .theme-bkash {
+            --brand-color: #e2136e;
+            --brand-gradient: linear-gradient(135deg, #e2136e, #be0e5a);
+            --brand-shadow: rgba(226, 19, 110, 0.35);
+        }
+
+        .theme-nagad {
+            --brand-color: #f7931e;
+            --brand-gradient: linear-gradient(135deg, #ec1c24, #f7931e);
+            --brand-shadow: rgba(236, 28, 36, 0.35);
+        }
+
+        .theme-rocket {
+            --brand-color: #8c349b;
+            --brand-gradient: linear-gradient(135deg, #8c349b, #5e2168);
+            --brand-shadow: rgba(140, 52, 155, 0.35);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.08) 0px, transparent 50%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Enterprise Card Container */
+        .aynopay-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        /* Header Bar */
+        .aynopay-header {
+            padding: 16px 24px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 18px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-logo span {
+            background: linear-gradient(135deg, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            font-weight: 600;
+        }
+
+        /* Order Invoice Bar */
+        .invoice-box {
+            padding: 20px 24px;
+            background: rgba(255, 255, 255, 0.015);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .invoice-details span {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .invoice-details strong {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .amount-tag {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        /* Operator Selector Tab */
+        .operator-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px 24px 10px;
+        }
+
+        .op-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            text-align: center;
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .op-btn.active {
+            background: var(--brand-gradient);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 10px 20px -5px var(--brand-shadow);
+        }
+
+        /* Dynamic Payment Body */
+        .payment-body {
+            padding: 15px 24px 24px;
+        }
+
+        .banner-alert {
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 3px solid var(--brand-color);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .input-box {
+            margin-bottom: 18px;
+        }
+
+        .input-box label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-field-wrapper {
+            position: relative;
+        }
+
+        .input-field-wrapper input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            outline: none;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .input-field-wrapper input:focus {
+            border-color: var(--brand-color);
+            box-shadow: 0 0 0 3px var(--brand-shadow);
+        }
+
+        /* Submit Button */
+        .btn-pay {
+            width: 100%;
+            background: var(--brand-gradient);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px var(--brand-shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        .btn-pay:active {
+            transform: translateY(0);
+        }
+
+        /* Loader & Processing */
+        .loader {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #fff;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Confirmation / Success Screen */
+        .status-screen {
+            display: none;
+            padding: 40px 24px;
+            text-align: center;
+        }
+
+        .status-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 2px solid #34d399;
+            color: #34d399;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+
+        .status-screen h3 {
+            color: var(--text-primary);
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .status-screen p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .timer-badge {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--brand-color);
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
 </head>
-<body class="pb-28">
+<body class="theme-bkash">
 
-  <div id="appLoader" class="fixed inset-0 bg-[#070913] z-50 flex flex-col items-center justify-center">
-    <div class="w-14 h-14 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4 shadow-xl shadow-blue-600/20"></div>
-    <div class="text-blue-500 font-extrabold tracking-widest text-xs animate-pulse">AYNO STORE SYSTEM LOADING...</div>
-  </div>
+    <div class="aynopay-card" id="main-card">
+        <!-- Header -->
+        <div class="aynopay-header">
+            <div class="brand-logo">
+                <span>AynoPay</span>
+            </div>
+            <div class="security-badge">
+                🔒 256-bit SSL Automated
+            </div>
+        </div>
 
-  <header class="sticky top-0 z-40 bg-[#070913]/90 backdrop-blur-md px-4 py-3 border-b border-white/5 flex justify-between items-center">
-    <div class="flex items-center space-x-2.5">
-      <div id="headerAvatar" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-bold text-white text-sm shadow-lg">A</div>
-      <div>
-        <h1 id="headerName" class="text-xs font-bold leading-tight text-white">Ayno Store</h1>
-        <span class="text-[9px] text-emerald-400 font-medium flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-ping"></span> Live & Secured</span>
-      </div>
+        <!-- Invoice -->
+        <div class="invoice-box">
+            <div class="invoice-details">
+                <span>Merchant Order ID</span>
+                <strong>#AP-998241</strong>
+            </div>
+            <div class="amount-tag">৳ 150.00</div>
+        </div>
+
+        <!-- Gateway Form Content -->
+        <div id="form-container">
+            <!-- Operator Selection Tabs -->
+            <div class="operator-grid">
+                <button class="op-btn active" onclick="switchMethod('bkash')">bKash</button>
+                <button class="op-btn" onclick="switchMethod('nagad')">Nagad</button>
+                <button class="op-btn" onclick="switchMethod('rocket')">Rocket</button>
+            </div>
+
+            <!-- Interactive Body -->
+            <div class="payment-body">
+                <div class="banner-alert" id="instruction-text">
+                    আপনার <strong>bKash</strong> পার্সোনাল অ্যাকাউন্ট থেকে টাকা পাঠাতে ওয়ালেট নাম্বার দিন। অটোমেশন সিস্টেম ওটিপি এনক্রিপশনের মাধ্যমে প্রসেস করবে।
+                </div>
+
+                <!-- Step 1: Mobile Number Input -->
+                <div id="step-phone">
+                    <div class="input-box">
+                        <label>আপনার অ্যাকাউন্ট নাম্বার (Your Account Number)</label>
+                        <div class="input-field-wrapper">
+                            <input type="text" id="phone_num" placeholder="017XXXXXXXX" maxlength="11">
+                        </div>
+                    </div>
+                    <button class="btn-pay" onclick="submitPhone()">
+                        <span>পরবর্তী ধাপ</span> &rarr;
+                    </button>
+                </div>
+
+                <!-- Step 2: Automated OTP Input (Initially Hidden) -->
+                <div id="step-otp" style="display: none;">
+                    <div class="input-box">
+                        <label>ওটিপি ভেরিফিকেশন কোড (Automated OTP)</label>
+                        <div class="input-field-wrapper">
+                            <input type="text" id="otp_num" placeholder="XXXXXX" maxlength="6">
+                        </div>
+                    </div>
+                    <button class="btn-pay" onclick="verifyOTP()">
+                        <span id="btn-text">পেমেন্ট কনফার্ম করুন</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Success Screen -->
+        <div class="status-screen" id="status-screen">
+            <div class="status-icon">✓</div>
+            <h3>পেমেন্ট সফল হয়েছে!</h3>
+            <p>আপনার অর্ডার কনফার্ম করা হয়েছে। মার্চেন্ট সাইটে রিডাইরেক্ট করা হচ্ছে...</p>
+            <div class="timer-badge" id="countdown">3</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer-note">
+            Powered by AynoPay Enterprise Payment Protocol
+        </div>
     </div>
-    <div class="flex items-center space-x-2">
-      <div class="text-right bg-blue-950/40 border border-blue-500/20 px-3 py-1 rounded-2xl">
-        <div class="text-[9px] text-gray-400 font-medium">Balance</div>
-        <div class="text-xs font-black text-emerald-400">৳<span id="topBalance">0.00</span></div>
-      </div>
-      <button onclick="switchTab('profileTab')" class="w-9 h-9 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-center text-xs text-gray-300 hover:text-white transition">
-        <i class="fa-solid fa-bell text-xs"></i>
-      </button>
-    </div>
-  </header>
 
-  <main class="p-4 max-w-md mx-auto">
+    <script>
+        let currentMethod = 'bkash';
 
-    <section id="storeTab" class="view-panel space-y-4">
-      <div class="glass-box p-4 rounded-3xl bg-gradient-to-r from-indigo-950/60 via-blue-950/40 to-slate-900/80 relative overflow-hidden shadow-xl">
-        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl pointer-events-none"></div>
-        <div class="relative z-10">
-          <span class="bg-amber-500/20 text-amber-400 text-[9px] font-bold px-2.5 py-0.5 rounded-full border border-amber-500/30 inline-flex items-center mb-2">
-            <i class="fa-solid fa-crown mr-1"></i> Premium Digital Store
-          </span>
-          <h2 class="text-sm font-extrabold text-white mt-1">সবচেয়ে কম দামে অরিজিনাল ডিজিটাল সার্ভিস</h2>
-          <p class="text-[10px] text-gray-300 mt-1 leading-relaxed">VPN, Proxy, Virtual Mail এবং Number অ্যাকাউন্ট ইনস্ট্যান্ট অটো-ডেলিভারি।</p>
-          <button onclick="switchTab('walletTab')" class="mt-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-[11px] font-bold px-4 py-2 rounded-2xl shadow-lg shadow-blue-600/25 transition flex items-center">
-            <span>Add Fund Now</span> <i class="fa-solid fa-arrow-right ml-1.5 text-[9px]"></i>
-          </button>
-        </div>
-      </div>
+        function switchMethod(method) {
+            currentMethod = method;
+            const body = document.body;
+            const buttons = document.querySelectorAll('.op-btn');
+            const alertText = document.getElementById('instruction-text');
 
-      <div class="glass-box px-3.5 py-2.5 rounded-2xl flex items-center space-x-2 text-[10px] shadow-sm">
-        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0"></span>
-        <span id="tickerText" class="truncate font-medium text-emerald-400">Siyam just got a USA Nord VPN 7Days</span>
-      </div>
+            // Reset Tab UI
+            buttons.forEach(btn => btn.classList.remove('active'));
 
-      <div class="flex space-x-2 overflow-x-auto no-scrollbar pb-1">
-        <button onclick="filterCategory('all')" class="cat-btn active-tab px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition">All Items</button>
-        <button onclick="filterCategory('VPN')" class="cat-btn glass-box px-4 py-2 rounded-2xl text-xs font-medium whitespace-nowrap text-gray-300 transition">🔒 VPN</button>
-        <button onclick="filterCategory('Proxy')" class="cat-btn glass-box px-4 py-2 rounded-2xl text-xs font-medium whitespace-nowrap text-gray-300 transition">🌐 Proxy</button>
-        <button onclick="filterCategory('Mail')" class="cat-btn glass-box px-4 py-2 rounded-2xl text-xs font-medium whitespace-nowrap text-gray-300 transition">✉️ Mail</button>
-        <button onclick="filterCategory('Number')" class="cat-btn glass-box px-4 py-2 rounded-2xl text-xs font-medium whitespace-nowrap text-gray-300 transition">📱 Number</button>
-      </div>
-
-      <div id="productGrid" class="grid grid-cols-2 gap-3">
-        </div>
-    </section>
-
-    <section id="walletTab" class="view-panel hidden space-y-4">
-      <div class="glass-box p-5 rounded-3xl text-center bg-gradient-to-b from-slate-900 via-blue-950/30 to-slate-900 shadow-xl">
-        <div class="text-[11px] text-gray-400 font-medium">Current Available Balance</div>
-        <div class="text-3xl font-black text-emerald-400 my-1 tracking-tight">৳<span id="walletBalance">0.00</span></div>
-        <p class="text-[10px] text-gray-400 mt-1">Instant Automated Top-Up via UddoktaPay Gateway</p>
-      </div>
-
-      <div class="glass-box p-4 rounded-3xl space-y-3 shadow-xl">
-        <h3 class="text-xs font-bold text-white flex items-center"><i class="fa-solid fa-coins text-blue-400 mr-1.5"></i> Select Top-Up Amount</h3>
-        <div class="grid grid-cols-4 gap-2">
-          <button onclick="setTopupAmount(50)" class="topup-btn bg-blue-600/20 border border-blue-500/40 text-blue-400 py-2 rounded-2xl text-xs font-bold transition">৳50</button>
-          <button onclick="setTopupAmount(100)" class="topup-btn glass-box text-gray-300 py-2 rounded-2xl text-xs font-bold transition">৳100</button>
-          <button onclick="setTopupAmount(200)" class="topup-btn glass-box text-gray-300 py-2 rounded-2xl text-xs font-bold transition">৳200</button>
-          <button onclick="setTopupAmount(500)" class="topup-btn glass-box text-gray-300 py-2 rounded-2xl text-xs font-bold transition">৳500</button>
-        </div>
-        <div>
-          <label class="text-[10px] text-gray-400 mb-1 block">Or Custom Amount (Min ৳50)</label>
-          <input type="number" id="customAmount" value="50" placeholder="Enter amount (৳)" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-blue-500 transition">
-        </div>
-
-        <h3 class="text-xs font-bold text-white pt-2 flex items-center"><i class="fa-solid fa-credit-card text-emerald-400 mr-1.5"></i> Payment Gateway</h3>
-        <div class="grid grid-cols-3 gap-2">
-          <div class="glass-box p-3 rounded-2xl text-center border-pink-500/40 bg-pink-950/10 cursor-pointer">
-            <i class="fa-solid fa-mobile-screen text-pink-400 text-sm mb-1"></i>
-            <div class="text-[11px] font-bold text-pink-400">bKash</div>
-          </div>
-          <div class="glass-box p-3 rounded-2xl text-center border-orange-500/40 bg-orange-950/10 cursor-pointer">
-            <i class="fa-solid fa-wallet text-orange-400 text-sm mb-1"></i>
-            <div class="text-[11px] font-bold text-orange-400">Nagad</div>
-          </div>
-          <div class="glass-box p-3 rounded-2xl text-center border-amber-500/40 bg-amber-950/10 cursor-pointer">
-            <i class="fa-brands fa-btc text-amber-400 text-sm mb-1"></i>
-            <div class="text-[11px] font-bold text-amber-400">Binance</div>
-          </div>
-        </div>
-
-        <button onclick="payWithUddoktaPay()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold py-3 rounded-2xl text-xs shadow-lg shadow-emerald-600/25 transition mt-2 flex items-center justify-center space-x-2">
-          <i class="fa-solid fa-shield-halved"></i>
-          <span>Pay via UddoktaPay Automated</span>
-        </button>
-      </div>
-    </section>
-
-    <section id="ordersTab" class="view-panel hidden space-y-3">
-      <div class="flex justify-between items-center px-1">
-        <h2 class="text-xs font-bold text-gray-300 uppercase tracking-wider">My Purchase History</h2>
-        <span class="text-[10px] text-blue-400 font-medium">Auto Delivered</span>
-      </div>
-      <div id="ordersList" class="space-y-2.5">
-        </div>
-    </section>
-
-    <section id="profileTab" class="view-panel hidden space-y-4">
-      <div class="glass-box p-5 rounded-3xl text-center relative overflow-hidden shadow-xl">
-        <div id="profileAvatar" class="w-16 h-16 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-3xl flex items-center justify-center font-black text-2xl mx-auto mb-3 shadow-lg shadow-blue-600/30">U</div>
-        <h2 id="profileName" class="text-sm font-extrabold text-white">Loading User...</h2>
-        <p id="profileUsername" class="text-xs text-blue-400 font-medium">@username</p>
-        <div class="mt-3">
-          <span class="inline-flex items-center bg-amber-500/20 text-amber-400 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-500/30">
-            <i class="fa-solid fa-crown mr-1.5"></i> Premium VIP Member
-          </span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-3 gap-2">
-        <div class="glass-box p-3 rounded-2xl text-center">
-          <div class="text-[9px] text-gray-400 font-medium">Total Orders</div>
-          <div id="statTotalOrders" class="text-sm font-black text-white mt-0.5">0</div>
-        </div>
-        <div class="glass-box p-3 rounded-2xl text-center">
-          <div class="text-[9px] text-gray-400 font-medium">Completed</div>
-          <div id="statCompletedOrders" class="text-sm font-black text-emerald-400 mt-0.5">0</div>
-        </div>
-        <div class="glass-box p-3 rounded-2xl text-center">
-          <div class="text-[9px] text-gray-400 font-medium">Total Spent</div>
-          <div class="text-sm font-black text-blue-400 mt-0.5">৳<span id="statSpent">0</span></div>
-        </div>
-      </div>
-
-      <div class="glass-box rounded-3xl overflow-hidden divide-y divide-white/5 shadow-xl">
-        <button onclick="switchTab('walletTab')" class="w-full px-4 py-3.5 flex justify-between items-center text-xs font-medium text-gray-300 hover:bg-white/5 transition">
-          <span><i class="fa-solid fa-wallet mr-2.5 text-blue-400 text-sm"></i> Add Balance & Funds</span>
-          <i class="fa-solid fa-chevron-right text-[10px] text-gray-500"></i>
-        </button>
-        <button onclick="checkAdminAccess()" class="w-full px-4 py-3.5 flex justify-between items-center text-xs font-medium text-rose-400 hover:bg-white/5 transition">
-          <span><i class="fa-solid fa-user-shield mr-2.5 text-sm"></i> Admin Control Panel</span>
-          <i class="fa-solid fa-chevron-right text-[10px] text-gray-500"></i>
-        </button>
-      </div>
-
-      <div class="glass-box p-4 rounded-3xl space-y-3 shadow-xl">
-        <h3 class="text-xs font-bold text-white flex items-center"><i class="fa-solid fa-lock text-amber-400 mr-1.5"></i> Web Firebase Auth (Email / Password)</h3>
-        <input type="email" id="authEmail" placeholder="user@aynostore.com" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2 text-xs text-white outline-none">
-        <input type="password" id="authPass" placeholder="••••••••" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2 text-xs text-white outline-none">
-        <div class="grid grid-cols-2 gap-2 pt-1">
-          <button onclick="firebaseLogin()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-2xl text-xs transition">Login</button>
-          <button onclick="firebaseRegister()" class="bg-slate-800 hover:bg-slate-700 text-gray-300 font-bold py-2 rounded-2xl text-xs transition">Register</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="adminTab" class="view-panel hidden space-y-4">
-      <div class="flex justify-between items-center">
-        <h2 class="text-sm font-extrabold text-rose-400 flex items-center"><i class="fa-solid fa-shield-halved mr-1.5"></i> Admin Dashboard</h2>
-        <button onclick="switchTab('profileTab')" class="text-xs bg-slate-800 hover:bg-slate-700 text-gray-300 px-3.5 py-1.5 rounded-2xl font-medium transition">Back</button>
-      </div>
-
-      <div class="grid grid-cols-3 gap-2">
-        <div class="glass-box p-3 rounded-2xl text-center">
-          <div class="text-[9px] text-gray-400 font-medium">Total Users</div>
-          <div id="admStatUsers" class="text-sm font-black text-white mt-0.5">0</div>
-        </div>
-        <div class="glass-box p-3 rounded-2xl text-center">
-          <div class="text-[9px] text-gray-400 font-medium">Total Orders</div>
-          <div id="admStatOrders" class="text-sm font-black text-blue-400 mt-0.5">0</div>
-        </div>
-        <div class="glass-box p-3 rounded-2xl text-center">
-          <div class="text-[9px] text-gray-400 font-medium">Total Revenue</div>
-          <div class="text-sm font-black text-emerald-400 mt-0.5">৳<span id="admStatSales">0</span></div>
-        </div>
-      </div>
-
-      <div class="glass-box p-4 rounded-3xl space-y-3 shadow-xl">
-        <h3 class="text-xs font-bold text-white flex items-center"><i class="fa-solid fa-plus-circle text-rose-400 mr-1.5"></i> Publish New Digital Item & Credentials</h3>
-        <input type="text" id="admPName" placeholder="Product Title (e.g., Nord VPN 7Days)" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2 text-xs text-white outline-none">
-        <div class="grid grid-cols-2 gap-2">
-          <input type="number" id="admPPrice" placeholder="Price (৳)" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2 text-xs text-white outline-none">
-          <select id="admPCat" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2 text-xs text-white outline-none">
-            <option value="VPN">VPN</option>
-            <option value="Proxy">Proxy</option>
-            <option value="Mail">Mail</option>
-            <option value="Number">Number</option>
-          </select>
-        </div>
-        <textarea id="admPCreds" placeholder="Put each credential on a new line (e.g. email:password or token)" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2 text-xs text-emerald-400 outline-none h-24 font-mono"></textarea>
-        <button onclick="adminPublishProduct()" class="w-full bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-extrabold py-2.5 rounded-2xl text-xs shadow-lg shadow-rose-600/25 transition">Publish to Store Stock</button>
-      </div>
-
-      <div class="glass-box p-4 rounded-3xl space-y-3 shadow-xl">
-        <h3 class="text-xs font-bold text-white flex items-center"><i class="fa-solid fa-gear text-blue-400 mr-1.5"></i> UddoktaPay API Settings</h3>
-        <input type="text" id="uddoktaApiKey" placeholder="UddoktaPay API Key" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2 text-xs text-white outline-none">
-        <input type="text" id="uddoktaApiUrl" placeholder="API Endpoint URL (e.g., https://sandbox.uddoktapay.com/api/checkout-v1)" class="w-full bg-slate-950/80 border border-slate-700 rounded-2xl px-3.5 py-2 text-xs text-white outline-none">
-        <button onclick="saveUddoktaConfig()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-2xl text-xs transition">Save Gateway Settings</button>
-      </div>
-    </section>
-
-  </main>
-
-  <nav class="fixed bottom-0 left-0 right-0 bg-[#070913]/95 border-t border-white/5 backdrop-blur-xl px-6 py-2.5 z-40">
-    <div class="flex justify-between items-center max-w-md mx-auto text-gray-400">
-      <button onclick="switchTab('storeTab')" id="navStore" class="nav-btn nav-active flex flex-col items-center space-y-1 transition">
-        <i class="fa-solid fa-store text-base"></i>
-        <span class="text-[10px] font-medium">Home</span>
-      </button>
-      <button onclick="switchTab('walletTab')" id="navWallet" class="nav-btn flex flex-col items-center space-y-1 transition">
-        <i class="fa-solid fa-wallet text-base"></i>
-        <span class="text-[10px] font-medium">Add Fund</span>
-      </button>
-      <button onclick="switchTab('ordersTab')" id="navOrders" class="nav-btn flex flex-col items-center space-y-1 transition">
-        <i class="fa-solid fa-bag-shopping text-base"></i>
-        <span class="text-[10px] font-medium">Orders</span>
-      </button>
-      <button onclick="switchTab('profileTab')" id="navProfile" class="nav-btn flex flex-col items-center space-y-1 transition">
-        <i class="fa-solid fa-user text-base"></i>
-        <span class="text-[10px] font-medium">Profile</span>
-      </button>
-    </div>
-  </nav>
-
-  <div id="deliveryModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="glass-box bg-slate-900 border border-white/10 p-5 rounded-3xl max-w-xs w-full text-center shadow-2xl">
-      <div class="w-12 h-12 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl shadow-inner">
-        <i class="fa-solid fa-check"></i>
-      </div>
-      <h3 class="text-sm font-extrabold text-white mb-1">Instant Order Delivered!</h3>
-      <p class="text-[10px] text-gray-400 mb-3">Your credentials have been securely allocated from stock:</p>
-      <div id="modalCredsText" class="bg-black/70 border border-slate-700 p-3 rounded-2xl text-xs font-mono text-emerald-400 break-all select-all mb-4 text-left">
-        -
-      </div>
-      <button onclick="document.getElementById('deliveryModal').classList.add('hidden')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-2xl text-xs shadow-lg transition">Close & Done</button>
-    </div>
-  </div>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, getDocs, addDoc, updateDoc, increment, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
-    // ⚠️ আপনার ফায়ারবেস কনফিগারেশন এখানে যুক্ত করুন
-    const firebaseConfig = {
-  apiKey: "AIzaSyA3GDWzV9kNRvoy8x2plyTe-24SCsfR65I",
-  authDomain: "ayno-store.firebaseapp.com",
-  databaseURL: "https://ayno-store-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "ayno-store",
-  storageBucket: "ayno-store.firebasestorage.app",
-  messagingSenderId: "503610297982",
-  appId: "1:503610297982:web:20b0b5f9a266697b78d22f"
-};
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    // Telegram Mini App Context Setup
-    const tg = window.Telegram.WebApp;
-    try { tg.expand(); } catch(e) {}
-    
-    // Telegram User Context & Local Testing Fallback
-    const tgUser = tg.initDataUnsafe?.user || { id: 888888, first_name: "Education Point BD", username: "educationpointbd24" };
-    
-    // 🛡️ অ্যাডমিন টেলিগ্রাম ইউআইডি (এখানে আপনার নিজস্ব টেলিগ্রাম আইডি দিন)
-    const ADMIN_TELEGRAM_UID = 6582650458;
-
-    let userData = null;
-    let allProducts = [];
-    let selectedTopupAmount = 50;
-
-    // --- INITIALIZE APPLICATION ---
-    async function initApp() {
-      try {
-        const userRef = doc(db, "users", tgUser.id.toString());
-        const userSnap = await getDoc(userRef);
-
-        if (!userSnap.exists()) {
-          userData = {
-            telegramId: tgUser.id,
-            name: tgUser.first_name,
-            username: tgUser.username || "vip_user",
-            balance: 50.00, // সাইনআপ বোনাস
-            totalSpent: 0,
-            joinedDate: "September 2026"
-          };
-          await setDoc(userRef, userData);
-        } else {
-          userData = userSnap.data();
+            // Change Theme & UI Text
+            if (method === 'bkash') {
+                body.className = 'theme-bkash';
+                buttons[0].classList.add('active');
+                alertText.innerHTML = 'আপনার <strong>bKash</strong> পার্সোনাল অ্যাকাউন্ট থেকে টাকা পাঠাতে ওয়ালেট নাম্বার দিন। অটোমেশন সিস্টেম ওটিপি প্রসেস করবে।';
+            } else if (method === 'nagad') {
+                body.className = 'theme-nagad';
+                buttons[1].classList.add('active');
+                alertText.innerHTML = 'আপনার <strong>Nagad</strong> পার্সোনাল অ্যাকাউন্ট থেকে সেন্ড মানি প্রসেস করার জন্য নাম্বার ইনপুট দিন।';
+            } else if (method === 'rocket') {
+                body.className = 'theme-rocket';
+                buttons[2].classList.add('active');
+                alertText.innerHTML = 'আপনার <strong>Rocket</strong> অ্যাকাউন্ট নাম্বার দিন। সিস্টেমের সাহায্যে ইন্সট্যান্ট কনফার্ম করা হবে।';
+            }
         }
 
-        // Update UI Profiles
-        document.getElementById('headerName').innerText = userData.name;
-        document.getElementById('headerAvatar').innerText = userData.name.charAt(0).toUpperCase();
-        document.getElementById('profileName').innerText = userData.name;
-        document.getElementById('profileUsername').innerText = `@${userData.username}`;
-        document.getElementById('profileAvatar').innerText = userData.name.charAt(0).toUpperCase();
-        
-        updateBalanceUI(userData.balance);
-
-        // Realtime Data Sync
-        listenProducts();
-        listenUserOrders();
-
-        document.getElementById('appLoader').classList.add('hidden');
-      } catch (err) {
-        console.error("Firebase Initialization Error:", err);
-        document.getElementById('appLoader').classList.add('hidden');
-      }
-    }
-
-    function updateBalanceUI(bal) {
-      document.getElementById('topBalance').innerText = bal.toFixed(2);
-      document.getElementById('walletBalance').innerText = bal.toFixed(2);
-    }
-
-    // --- REALTIME PRODUCTS SYNC ---
-    function listenProducts() {
-      onSnapshot(collection(db, "products"), (snapshot) => {
-        allProducts = [];
-        snapshot.forEach(doc => {
-          allProducts.push({ id: doc.id, ...doc.data() });
-        });
-        renderProducts(allProducts);
-      });
-    }
-
-    function renderProducts(items) {
-      const grid = document.getElementById('productGrid');
-      grid.innerHTML = '';
-
-      items.forEach(p => {
-        const inStock = p.stock > 0;
-        grid.innerHTML += `
-          <div class="glass-box p-3.5 rounded-3xl flex flex-col justify-between shadow-lg">
-            <div>
-              <span class="text-[8px] bg-blue-600/20 text-blue-400 font-bold px-2.5 py-0.5 rounded-full uppercase">${p.category}</span>
-              <h3 class="text-xs font-bold text-white mt-2 leading-snug">${p.name}</h3>
-            </div>
-            <div class="mt-3">
-              <div class="flex justify-between items-center mb-2.5">
-                <span class="text-sm font-black text-emerald-400">৳${p.price}</span>
-                <span class="text-[9px] text-gray-400 font-medium">Stock: ${p.stock}</span>
-              </div>
-              <button onclick="window.buyProduct('${p.id}')" ${!inStock ? 'disabled' : ''} 
-                class="w-full ${inStock ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20' : 'bg-slate-800 text-gray-500 cursor-not-allowed'} py-2 rounded-2xl text-xs font-bold transition">
-                ${inStock ? 'Buy Now' : 'Out of Stock'}
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    // --- INSTANT PURCHASE LORIC ---
-    window.buyProduct = async (prodId) => {
-      const product = allProducts.find(p => p.id === prodId);
-      if (!product || product.stock <= 0) return alert("Product out of stock!");
-      if (userData.balance < product.price) return alert("Insufficient balance! Please add funds to wallet.");
-
-      if (!confirm(`Confirm purchase: ${product.name} for ৳${product.price}?`)) return;
-
-      try {
-        const credentialLine = product.credentials.pop(); 
-        const newBalance = userData.balance - product.price;
-        const newSpent = (userData.totalSpent || 0) + product.price;
-
-        await updateDoc(doc(db, "users", tgUser.id.toString()), { 
-          balance: newBalance,
-          totalSpent: newSpent 
-        });
-        userData.balance = newBalance;
-        userData.totalSpent = newSpent;
-        updateBalanceUI(newBalance);
-
-        await updateDoc(doc(db, "products", prodId), {
-          stock: product.credentials.length,
-          credentials: product.credentials
-        });
-
-        await addDoc(collection(db, "orders"), {
-          userId: tgUser.id,
-          productName: product.name,
-          price: product.price,
-          credentials: credentialLine,
-          date: new Date()
-        });
-
-        await updateDoc(doc(db, "analytics", "main"), {
-          totalSales: increment(product.price),
-          totalOrders: increment(1)
-        }).catch(async () => {
-          await setDoc(doc(db, "analytics", "main"), { totalSales: product.price, totalOrders: 1 });
-        });
-
-        document.getElementById('modalCredsText').innerText = credentialLine;
-        document.getElementById('deliveryModal').classList.remove('hidden');
-
-      } catch (err) {
-        console.error(err);
-        alert("Transaction execution failed!");
-      }
-    };
-
-    // --- REALTIME USER ORDERS ---
-    function listenUserOrders() {
-      const q = query(collection(db, "orders"), where("userId", "==", tgUser.id));
-      onSnapshot(q, (snapshot) => {
-        const list = document.getElementById('ordersList');
-        list.innerHTML = '';
-        let completedCount = 0;
-
-        snapshot.forEach(doc => {
-          const ord = doc.data();
-          completedCount++;
-          list.innerHTML += `
-            <div class="glass-box p-3.5 rounded-2xl shadow-md">
-              <div class="flex justify-between items-start mb-1">
-                <h4 class="text-xs font-bold text-white">${ord.productName}</h4>
-                <span class="text-xs font-bold text-emerald-400">৳${ord.price}</span>
-              </div>
-              <div class="bg-black/60 p-2 rounded-xl text-[10px] font-mono text-emerald-300 select-all break-all mt-1.5">${ord.credentials}</div>
-              <div class="text-[9px] text-gray-500 mt-2 flex justify-between">
-                <span>Status: <strong class="text-emerald-400">Completed</strong></span>
-                <span>Auto-Delivered</span>
-              </div>
-            </div>
-          `;
-        });
-
-        document.getElementById('statTotalOrders').innerText = completedCount;
-        document.getElementById('statCompletedOrders').innerText = completedCount;
-        document.getElementById('statSpent').innerText = userData.totalSpent || 0;
-      });
-    }
-
-    // --- UDDOKTAPAY AUTOMATED GATEWAY INTEGRATION ---
-    window.payWithUddoktaPay = async () => {
-      const customAmount = parseFloat(document.getElementById('customAmount').value) || selectedTopupAmount;
-      if (customAmount < 50) return alert("Minimum deposit amount is ৳50");
-
-      alert(`Connecting UddoktaPay Automated Gateway for ৳${customAmount}...\n(API integration active: Sandbox/Live endpoint ready)`);
-      
-      // UddoktaPay API Request Simulation & Callback Handler
-      // রিয়েল প্রজেক্টে এখানে UddoktaPay API URL-এ fetch request করে checkout_url এ redirect করতে হবে।
-    };
-
-    window.setTopupAmount = (amt) => {
-      selectedTopupAmount = amt;
-      document.getElementById('customAmount').value = amt;
-    };
-
-    // --- FIREBASE AUTHENTICATION (Email/Password & UID) ---
-    window.firebaseLogin = async () => {
-      const email = document.getElementById('authEmail').value;
-      const pass = document.getElementById('authPass').value;
-      if(!email || !pass) return alert("Enter email and password!");
-      try {
-        const res = await signInWithEmailAndPassword(auth, email, pass);
-        alert("Firebase Auth Successful! UID: " + res.user.uid);
-      } catch(err) { alert(err.message); }
-    };
-
-    window.firebaseRegister = async () => {
-      const email = document.getElementById('authEmail').value;
-      const pass = document.getElementById('authPass').value;
-      if(!email || !pass) return alert("Enter email and password!");
-      try {
-        const res = await createUserWithEmailAndPassword(auth, email, pass);
-        alert("Firebase Account Created Successfully! UID: " + res.user.uid);
-      } catch(err) { alert(err.message); }
-    };
-
-    // --- ADMIN ACCESS & CONTROLS ---
-    window.checkAdminAccess = () => {
-      if (tgUser.id !== ADMIN_TELEGRAM_UID) {
-        return alert("Access Denied! Your Telegram UID is not authorized as Admin.");
-      }
-      switchTab('adminTab');
-      loadAdminData();
-    };
-
-    window.adminPublishProduct = async () => {
-      const name = document.getElementById('admPName').value;
-      const price = parseFloat(document.getElementById('admPPrice').value);
-      const cat = document.getElementById('admPCat').value;
-      const credsRaw = document.getElementById('admPCreds').value;
-
-      if (!name || !price || !credsRaw) return alert("Please fill all required fields!");
-
-      const credsArray = credsRaw.split('\n').filter(l => l.trim() !== '');
-
-      await addDoc(collection(db, "products"), {
-        name: name,
-        price: price,
-        category: cat,
-        stock: credsArray.length,
-        credentials: credsArray
-      });
-
-      alert("Product published successfully with stock credentials!");
-      document.getElementById('admPName').value = '';
-      document.getElementById('admPCreds').value = '';
-    };
-
-    window.saveUddoktaConfig = () => {
-      const key = document.getElementById('uddoktaApiKey').value;
-      const url = document.getElementById('uddoktaApiUrl').value;
-      if(!key) return alert("Enter UddoktaPay API Key!");
-      localStorage.setItem('uddoktaKey', key);
-      localStorage.setItem('uddoktaUrl', url);
-      alert("UddoktaPay API credentials saved successfully!");
-    };
-
-    function loadAdminData() {
-      onSnapshot(doc(db, "analytics", "main"), (snap) => {
-        if (snap.exists()) {
-          document.getElementById('admStatSales').innerText = snap.data().totalSales || 0;
-          document.getElementById('admStatOrders').innerText = snap.data().totalOrders || 0;
+        function submitPhone() {
+            const phone = document.getElementById('phone_num').value;
+            if (phone.length < 11) {
+                alert('সঠিক ১১ ডিজিটের মোবাইল নাম্বার দিন');
+                return;
+            }
+            document.getElementById('step-phone').style.display = 'none';
+            document.getElementById('step-otp').style.display = 'block';
         }
-      });
-      onSnapshot(collection(db, "users"), (snap) => {
-        document.getElementById('admStatUsers').innerText = snap.size;
-      });
-    }
 
-    // --- TAB SWITCHER LOGIC ---
-    window.switchTab = (tabId) => {
-      document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
-      document.getElementById(tabId).classList.remove('hidden');
+        function verifyOTP() {
+            const otp = document.getElementById('otp_num').value;
+            if (otp.length < 4) {
+                alert('সঠিক ভেরিফিকেশন কোড লিখুন');
+                return;
+            }
 
-      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('nav-active'));
-      if(tabId === 'storeTab') document.getElementById('navStore').classList.add('nav-active');
-      if(tabId === 'walletTab') document.getElementById('navWallet').classList.add('nav-active');
-      if(tabId === 'ordersTab') document.getElementById('navOrders').classList.add('nav-active');
-      if(tabId === 'profileTab') document.getElementById('navProfile').classList.add('nav-active');
-    };
+            const btnText = document.getElementById('btn-text');
+            btnText.innerHTML = '<span class="loader"></span> অটো ভেরিফাই হচ্ছে...';
 
-    window.filterCategory = (cat) => {
-      if (cat === 'all') renderProducts(allProducts);
-      else renderProducts(allProducts.filter(p => p.category === cat));
-    };
+            setTimeout(() => {
+                document.getElementById('form-container').style.display = 'none';
+                document.getElementById('status-screen').style.display = 'block';
 
-    // Execute Main Boot
-    initApp();
-  </script>
+                let count = 3;
+                const timer = setInterval(() => {
+                    count--;
+                    document.getElementById('countdown').innerText = count;
+                    if (count <= 0) {
+                        clearInterval(timer);
+                        alert("Merchant Callback Executed!");
+                    }
+                }, 1000);
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
